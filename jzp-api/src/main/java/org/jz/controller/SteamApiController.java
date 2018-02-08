@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SteamApiController {
 
     /**
-     *
+     * wrap ${@link org.jz.ext.steam.ApiDesc} api
      * @return
      */
     public JSONObject getAppList(){
