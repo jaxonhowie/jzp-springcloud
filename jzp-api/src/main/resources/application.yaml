@@ -1,0 +1,9 @@
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8080/eureka
+server:
+  port: 5555
+spring:
+  application:
+    name: jzp-api
