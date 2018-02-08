@@ -2,18 +2,20 @@ package org.jz;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 /**
- * entrance of eureka server
+ * api platform
+ *
  * @author Hongyi Zheng
- * @date 2018/2/8
+ * @date 2018-2-8
+ *
  */
-@EnableEurekaServer
+@EnableEurekaClient
 @SpringBootApplication
-public class JzpServerApplication {
+public class JzpApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JzpServerApplication.class, args);
+		SpringApplication.run(JzpApiApplication.class, args);
 	}
 }
