@@ -1,10 +1,13 @@
 package org.jz.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.jz.util.HttpClientUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -24,12 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class SteamApiController {
 
     /**
-     * wrap ${@link org.jz.ext.steam.ApiDesc} api
+     * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
-    public JSONObject getAppList(){
-        return null;
+    @RequestMapping(value = "/apilist")
+    public JSONObject getApiList() throws IOException {
+        String url = "http://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v0001/";
+        Map<String,String> params = new HashMap<>(1);
+        String response = HttpClientUtils.doGet(url,params);
+        return JSONObject.parseObject(response);
     }
-
 
 }

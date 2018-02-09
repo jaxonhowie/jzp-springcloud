@@ -1,6 +1,7 @@
 package org.jz.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.config.RequestConfig;
@@ -8,6 +9,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -32,19 +34,15 @@ public class HttpClientUtils {
     /**
      * default charset
      */
-    public static String CHARSET = "UTF-8";
+    private static String CHARSET = "UTF-8";
 
     private static ThreadLocal<Map<String, String>> httpHeader = new ThreadLocal<Map<String, String>>();
 
     private static ThreadLocal<Map<String, Object>> httpClientConfig = new ThreadLocal<Map<String, Object>>();
 
-    public static final String CONNECT_TIMEOUT = "connect_timeout";
+    private static final String CONNECT_TIMEOUT = "connect_timeout";
 
-    public static final String SOCKET_TIMEOUT = "socket_timeout";
-
-    public static Integer DEFAULT_CONNECT_TIMEOUT = 600000;
-
-    public static Integer DEFAULT_SOCKET_TIMEOUT = 600000;
+    private static final String SOCKET_TIMEOUT = "socket_timeout";
 
     /**
      * get request URI
@@ -54,6 +52,35 @@ public class HttpClientUtils {
     public static String getPureUri(String uri){
         return uri.substring(uri.indexOf('/',uri.indexOf('/')+1),uri.length());
     }
+
+
+    /**
+     * send HTTP Get request
+     *
+     * @param url     request url
+     * @param params  request parameters
+     * @param charset encoding charset
+     * @return response
+     */
+    public static String doGet(String url, Map<String, String> params, String charset) throws IOException {
+        String encoding = CHARSET;
+        if (StringUtils.isNotBlank(charset)) {
+            encoding = charset;
+        }
+        return doGet(url, params, encoding, encoding);
+    }
+
+    /**
+     * reload doGet method
+     * @param url request url
+     * @param params request params
+     * @return
+     * @throws IOException
+     */
+    public static String doGet(String url,Map<String,String>params)throws IOException{
+        return doGet(url,params,CHARSET);
+    }
+
 
     /**
      *
@@ -97,12 +124,32 @@ public class HttpClientUtils {
             httpClient = buildHttpClient();
             response  = httpClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
-            //TODO doGet method incomplete
+            if (200 != statusCode) {
+                httpGet.abort();
+                throw new RuntimeException("Httpclient error, statusCode : "+statusCode);
+            }
+            HttpEntity entity = response.getEntity();
+            String result = null;
+            if (null != entity) {
+                result = EntityUtils.toString(entity,responseCharset);
+            }
+            EntityUtils.consume(entity);
+            response.close();
+            return result;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
+            throw e;
+        }finally {
+            if (null != response) {
+                response.close();
+            }
+            if (null != httpGet) {
+                httpGet.releaseConnection();
+            }
+            if (null != httpClient) {
+                httpClient.close();
+            }
         }
-        //TODOs
-        return null;
     }
 
     private static void handlerHeader(HttpRequestBase requestBase) {
@@ -120,29 +167,28 @@ public class HttpClientUtils {
             configSetting = httpClientConfig.get();
         }
         RequestConfig.Builder builder = RequestConfig.custom();
+        Integer DEFAULT_CONNECT_TIMEOUT = 600000;
         Integer connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-        if (configSetting.get(CONNECT_TIMEOUT) != null) {
-            try {
-                connectTimeout = Integer.valueOf(configSetting.get(CONNECT_TIMEOUT).toString());
-            } catch (Exception e) {
-                logger.warn("class covert error!", e);
-                connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-                throw e;
-            }
-        }
+        connectTimeout = getInteger(configSetting, connectTimeout, CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT);
         builder.setConnectTimeout(connectTimeout);
+        Integer DEFAULT_SOCKET_TIMEOUT = 600000;
         Integer socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-        if (configSetting.get(SOCKET_TIMEOUT) != null) {
-            try {
-                socketTimeout = Integer.valueOf(configSetting.get(SOCKET_TIMEOUT).toString());
-            } catch (Exception e) {
-                logger.warn("class covert error!", e);
-                socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-                throw e;
-            }
-        }
+        socketTimeout = getInteger(configSetting, socketTimeout, SOCKET_TIMEOUT, DEFAULT_SOCKET_TIMEOUT);
         builder.setSocketTimeout(socketTimeout);
         RequestConfig config = builder.build();
         return HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+    }
+
+    private static Integer getInteger(Map<String, Object> configSetting, Integer connectTimeout, String connectTimeout2, Integer defaultConnectTimeout) {
+        if (configSetting.get(connectTimeout2) != null) {
+            try {
+                connectTimeout = Integer.valueOf(configSetting.get(connectTimeout2).toString());
+            } catch (Exception e) {
+                logger.warn("class covert error!", e);
+                connectTimeout = defaultConnectTimeout;
+                throw e;
+            }
+        }
+        return connectTimeout;
     }
 }
