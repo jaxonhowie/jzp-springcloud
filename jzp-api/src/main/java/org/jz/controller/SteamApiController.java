@@ -1,12 +1,21 @@
 package org.jz.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import org.jz.commons.constant.SteamConstants;
+import org.jz.ext.steam.ApiList;
+import org.jz.model.steam.SteamApi;
+import org.jz.service.SteamApiService;
+import org.jz.util.CacheUtils;
 import org.jz.util.HttpClientUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,16 +35,41 @@ import java.util.Map;
 @RequestMapping("/steam")
 public class SteamApiController {
 
+    private final static Logger logger = LoggerFactory.getLogger(SteamApiController.class);
+
+    @Autowired
+    ApiList apiList;
+
+    @Autowired
+    SteamApiService steamApiService;
+
     /**
      * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
     @RequestMapping(value = "/apilist")
     public JSONObject getApiList() throws IOException {
-        String url = "http://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v0001/";
-        Map<String,String> params = new HashMap<>(1);
-        String response = HttpClientUtils.doGet(url,params);
-        return JSONObject.parseObject(response);
+
+        List<SteamApi> list = steamApiService.getAllApis();
+        //judge cache if expired
+        if (null!=list &&list.size()>0) {
+            if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
+                steamApiService.delAll();
+                //call external Api
+                JSONObject rspJson = apiList.callApiList();
+                list = apiList.parseToModel(rspJson);
+                for (SteamApi steamApi : list) {
+                    try {
+                        steamApiService.insertSelective(steamApi);
+                    } catch (Exception e) {
+                        logger.error("Data insert exception:{}",e);
+                    }
+                }
+            }
+            return apiList.parseToJson(list);
+        }
+        //TODO 2018/2/9
+        return null;
     }
 
 }

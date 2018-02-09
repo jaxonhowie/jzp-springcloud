@@ -1,4 +1,4 @@
-package org.jz.commons;
+package org.jz.commons.constant;
 
 /**
  * @author Hongyi Zheng
@@ -14,5 +14,9 @@ public class SteamConstants {
      * steam web api url
      */
     public static final String STEAM_PRIVATE_URL = "www.jz1989.org";
+
+    //************************ApiList Constants****************************
+
+    public static final int API_LIST_CACHE = 1;
 
 }

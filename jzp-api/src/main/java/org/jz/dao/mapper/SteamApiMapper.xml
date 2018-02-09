@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="dao.ApiMapper">
-  <resultMap id="BaseResultMap" type="model.Api">
+<mapper namespace="org.jz.dao.SteamApiMapper">
+  <resultMap id="BaseResultMap" type="org.jz.model.steam.Api.SteamApi">
     <id column="OID" jdbcType="INTEGER" property="oid" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="OITIME" jdbcType="TIMESTAMP" property="oitime" />
     <result column="OUTIME" jdbcType="TIMESTAMP" property="outime" />
     <result column="IS_DEL" jdbcType="CHAR" property="isDel" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="model.Api">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.jz.model.steam.SteamApi">
     <result column="METHODS" jdbcType="LONGVARCHAR" property="methods" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -29,15 +29,15 @@
     delete from ext_steam_api
     where OID = #{oid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="model.Api">
-    insert into ext_steam_api (OID, NAME, OITIME, 
+  <insert id="insert" parameterType="org.jz.model.steam.SteamApi">
+    insert into ext_steam_api (OID, NAME, OITIME,
       OUTIME, IS_DEL, METHODS
       )
-    values (#{oid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{oitime,jdbcType=TIMESTAMP}, 
+    values (#{oid,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{oitime,jdbcType=TIMESTAMP},
       #{outime,jdbcType=TIMESTAMP}, #{isDel,jdbcType=CHAR}, #{methods,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="model.Api">
+  <insert id="insertSelective" parameterType="org.jz.model.steam.SteamApi">
     insert into ext_steam_api
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="oid != null">
@@ -80,7 +80,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="model.Api">
+  <update id="updateByPrimaryKeySelective" parameterType="org.jz.model.steam.SteamApi">
     update ext_steam_api
     <set>
       <if test="name != null">
@@ -101,7 +101,7 @@
     </set>
     where OID = #{oid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="model.Api">
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.jz.model.steam.SteamApi">
     update ext_steam_api
     set NAME = #{name,jdbcType=VARCHAR},
       OITIME = #{oitime,jdbcType=TIMESTAMP},
@@ -110,7 +110,7 @@
       METHODS = #{methods,jdbcType=LONGVARCHAR}
     where OID = #{oid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="model.Api">
+  <update id="updateByPrimaryKey" parameterType="org.jz.model.steam.SteamApi">
     update ext_steam_api
     set NAME = #{name,jdbcType=VARCHAR},
       OITIME = #{oitime,jdbcType=TIMESTAMP},
@@ -118,4 +118,12 @@
       IS_DEL = #{isDel,jdbcType=CHAR}
     where OID = #{oid,jdbcType=INTEGER}
   </update>
+
+  <select id="getAllApis" resultMap="BaseResultMap">
+    SELECT * FROM ext_steam_api WHERE IS_DEL = '0'
+  </select>
+
+  <delete id="delAll">
+    DELETE FROM ext_steam_api;
+  </delete>
 </mapper>
