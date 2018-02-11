@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2018/2/9
  */
 
-@Service("steamApiServiceImpl")
+@Service("steamApiService")
 public class SteamApiServiceImpl implements SteamApiService{
 
     @Autowired

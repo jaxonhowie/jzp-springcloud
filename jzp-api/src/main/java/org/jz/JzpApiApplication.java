@@ -1,8 +1,11 @@
 package org.jz;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * api platform
@@ -12,6 +15,8 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  *
  */
 @EnableEurekaClient
+@EnableAutoConfiguration()
+@ComponentScan
 @SpringBootApplication
 public class JzpApiApplication {
 
