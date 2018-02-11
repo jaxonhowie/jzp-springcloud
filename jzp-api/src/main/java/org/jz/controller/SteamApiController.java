@@ -51,12 +51,14 @@ public class SteamApiController {
     public JSONObject getApiList() throws IOException {
 
         List<SteamApi> list = steamApiService.getAllApis();
+        JSONObject rspJson = new JSONObject();
+
         //judge cache if expired
         if (null!=list &&list.size()>0) {
             if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
                 steamApiService.delAll();
                 //call external Api
-                JSONObject rspJson = apiList.callApiList();
+                rspJson = apiList.callApiList();
                 list = apiList.parseToModel(rspJson);
                 for (SteamApi steamApi : list) {
                     try {
@@ -67,9 +69,21 @@ public class SteamApiController {
                 }
             }
             return apiList.parseToJson(list);
+        }else {
+            //no cache,call external api
+            rspJson = apiList.callApiList();
+            //cache to db
+            list = apiList.parseToModel(rspJson);
+            for (SteamApi steamApi : list) {
+                try {
+                    steamApiService.insertSelective(steamApi);
+                } catch (Exception e) {
+                    logger.error("Data insert exception:{}",e);
+                }
+            }
+            return rspJson;
         }
-        //TODO 2018/2/9
-        return null;
+
     }
 
 }
