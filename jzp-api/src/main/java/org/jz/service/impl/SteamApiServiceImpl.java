@@ -1,6 +1,6 @@
 package org.jz.service.impl;
 
-import org.jz.dao.SteamApiMapper;
+import org.jz.dao.SteamApiDao;
 import org.jz.model.steam.SteamApi;
 import org.jz.service.SteamApiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +17,20 @@ import java.util.List;
 public class SteamApiServiceImpl implements SteamApiService{
 
     @Autowired
-    SteamApiMapper steamApiMapper;
+    SteamApiDao steamApiDao;
 
     @Override
-    public List<SteamApi> getAllApis() {
-        return steamApiMapper.getAllApis();
+    public List<SteamApi> queryAll() {
+        return steamApiDao.queryAll();
     }
 
     @Override
-    public boolean delAll() {
-        return steamApiMapper.delAll()>0?true:false;
+    public void delAll() {
+        steamApiDao.delAll();
     }
 
     @Override
     public void insertSelective(SteamApi steamApi) {
-        steamApiMapper.insertSelective(steamApi);
+        steamApiDao.insertSelective(steamApi);
     }
 }
