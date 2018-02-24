@@ -10,6 +10,7 @@ import org.jz.util.HttpClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,10 +51,10 @@ public class SteamApiController {
     @RequestMapping(value = "/apilist")
     public JSONObject getApiList() throws IOException {
 
-        List<SteamApi> list = steamApiService.getAllApis();
-        JSONObject rspJson = new JSONObject();
+        List<SteamApi> list = steamApiService.queryAll();
+        JSONObject rspJson;
 
-        //judge cache if expired
+        //search cache if expired
         if (null!=list &&list.size()>0) {
             if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
                 steamApiService.delAll();
@@ -84,6 +85,14 @@ public class SteamApiController {
             return rspJson;
         }
 
+    }
+
+    @RequestMapping("/apilist")
+    public String index(ModelMap map) {
+        // 加入一个属性，用来在模板中读取
+        map.addAttribute("host", "http://blog.didispace.com");
+        // return模板文件的名称，对应src/main/resources/templates/index.html
+        return "apiList";
     }
 
 }

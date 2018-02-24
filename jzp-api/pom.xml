@@ -62,6 +62,12 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+		<!--thymeleaf dependency-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
     </dependencies>
 
 	<dependencyManagement>
@@ -85,16 +91,24 @@
 		</plugins>
 
 		<resources>
+
 			<resource>
 				<directory>src/main/java</directory>
 				<!-- 此配置不可缺，否则mybatis的Mapper.xml将会丢失 -->
 				<includes>
 					<include>**/*.xml</include>
 				</includes>
+				<filtering>false</filtering>
 			</resource>
 			<!--指定资源的位置-->
 			<resource>
 				<directory>src/main/resources</directory>
+				<!-- 此配置不可缺，否则mybatis的Mapper.xml将会丢失 -->
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.yaml</include>
+				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 	</build>
