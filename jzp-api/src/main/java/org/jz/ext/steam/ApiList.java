@@ -2,6 +2,7 @@ package org.jz.ext.steam;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.jz.commons.constant.SteamConstants;
 import org.jz.model.steam.SteamApi;
 import org.jz.util.HttpClientUtils;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class ApiList {
     }
 
     public JSONObject callApiList() throws IOException {
-        String url = "http://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v0001/";
+        String url = SteamConstants.API_LIST_URL;
         Map<String,String> params = new HashMap<>(1);
         String response = HttpClientUtils.doGet(url,params);
         JSONObject rspJson = JSONObject.parseObject(response);
@@ -50,7 +51,7 @@ public class ApiList {
         JSONObject rspJson = new JSONObject();
         JSONArray interfaces = new JSONArray();
         JSONObject jo = new JSONObject();
-        JSONArray ja = new JSONArray();
+        JSONArray ja;
         for (SteamApi steamApi : list) {
             jo.put("name",steamApi.getName());
             ja = JSONArray.parseArray(steamApi.getMethods());

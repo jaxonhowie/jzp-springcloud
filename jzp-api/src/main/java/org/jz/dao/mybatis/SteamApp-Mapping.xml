@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.jz.dao.SteamAppDao">
+
+    <resultMap id="getMap" type="org.jz.model.steam.SteamApp">
+        <result column="OID" property="oid" jdbcType="NUMERIC"/>
+        <result column="APP_ID" property="appId" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="OITIME" property="oitime" jdbcType="TIMESTAMP"/>
+        <result column="OUTIME" property="outime" jdbcType="TIMESTAMP"/>
+        <result column="IS_DEL" property="isDel" jdbcType="CHAR"/>
+    </resultMap>
+
+    <select id="queryAll" resultMap="getMap">
+        SELECT *
+        FROM ext_steam_app
+        WHERE IS_DEL = '0'
+    </select>
+
+    <delete id="delAll">
+        DELETE FROM ext_steam_app
+    </delete>
+
+    <insert id="insertSelective" parameterType="org.jz.model.steam.SteamApp">
+        INSERT INTO ext_steam_app
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="oid != null">
+                OID,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="appId != null">
+                APP_ID,
+            </if>
+            <if test="oitime != null">
+                OITIME,
+            </if>
+            <if test="outime != null">
+                OUTIME,
+            </if>
+            <if test="isDel != null">
+                IS_DEL,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="oid != null">
+                #{oid,jdbcType=NUMERIC},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="appId != null">
+                #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="oitime != null">
+                #{oitime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="outime != null">
+                #{outime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDel != null">
+                #{isDel,jdbcType=CHAR}
+            </if>
+        </trim>
+    </insert>
+</mapper>

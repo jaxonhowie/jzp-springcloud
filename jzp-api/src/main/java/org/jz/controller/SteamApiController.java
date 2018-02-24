@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.jz.commons.constant.SteamConstants;
 import org.jz.ext.steam.ApiList;
+import org.jz.ext.steam.AppList;
 import org.jz.model.steam.SteamApi;
+import org.jz.model.steam.SteamApp;
 import org.jz.service.SteamApiService;
+import org.jz.service.SteamAppService;
 import org.jz.util.CacheUtils;
 import org.jz.util.HttpClientUtils;
 import org.slf4j.Logger;
@@ -46,10 +49,17 @@ public class SteamApiController {
     @Autowired
     SteamApiService steamApiService;
 
+    @Autowired
+    SteamAppService steamAppService;
+
+    @Autowired
+    AppList appList;
+
     /**
      * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
+    @RequestMapping("apilist")
     public JSONObject getApiList() throws IOException {
 
         List<SteamApi> list = steamApiService.queryAll();
@@ -66,7 +76,7 @@ public class SteamApiController {
                     try {
                         steamApiService.insertSelective(steamApi);
                     } catch (Exception e) {
-                        logger.error("Data insert exception:{}",e);
+                        logger.error("Data insert exception:{}",e.getMessage());
                     }
                 }
             }
@@ -80,7 +90,7 @@ public class SteamApiController {
                 try {
                     steamApiService.insertSelective(steamApi);
                 } catch (Exception e) {
-                    logger.error("Data insert exception:{}",e);
+                    logger.error("Data insert exception:{}",e.getMessage());
                 }
             }
             return rspJson;
@@ -88,23 +98,45 @@ public class SteamApiController {
 
     }
 
-    @RequestMapping("/apilist")
-    public String apiListPage(ModelMap map) throws IOException {
-        JSONObject jo = getApiList();
-        List<String> apiNames = new ArrayList<>(10);
-        if (null != jo && jo.size()>0) {
-            JSONArray interfaces = jo.getJSONArray("interfaces");
+    /**
+     *
+     * @return
+     */
+    @RequestMapping(value = "/applist")
+    public JSONObject getAppList() throws IOException {
 
-            for (Object obj : interfaces) {
-                String json = JSONObject.toJSONString(obj);
-                JSONObject method = JSONObject.parseObject(json);
-                apiNames.add(method.getString("name"));
+        List<SteamApp> list = steamAppService.queryAll();
+        JSONObject rspJson;
+
+        if (null!=list &&list.size()>0) {
+            if (CacheUtils.isExpired(SteamConstants.APP_LIST_CACHE,list.get(0).getOutime())) {
+                steamAppService.delAll();
+
+                //call external api
+                rspJson = appList.callAppListApi();
+                list = appList.parseToModel(rspJson);
+                for (SteamApp app : list) {
+                    try {
+                        steamAppService.insertSelective(app);
+                    } catch (Exception e) {
+                        logger.error("Data insert exception:{}",e.getMessage());
+                    }
+                }
             }
+            return appList.parseToJson(list);
+        }else {
+            //no cache,call external api
+            rspJson = appList.callAppListApi();
+            //cache to db
+            list = appList.parseToModel(rspJson);
+            for (SteamApp steamApp : list) {
+                try {
+                    steamAppService.insertSelective(steamApp);
+                } catch (Exception e) {
+                    logger.error("Data insert exception:{}",e.getMessage());
+                }
+            }
+            return rspJson;
         }
-        // 加入一个属性，用来在模板中读取
-        map.addAttribute("api-names", apiNames);
-        // return模板文件的名称，对应src/main/resources/templates/api-list.html
-        return "api-list";
     }
-
 }
