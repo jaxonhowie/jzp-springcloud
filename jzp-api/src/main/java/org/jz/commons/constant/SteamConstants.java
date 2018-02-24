@@ -15,4 +15,12 @@ public class SteamConstants {
 
     public static final int API_LIST_CACHE = 1;
 
+    public static final String API_LIST_URL = "http://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v0001/";
+
+    //************************AppList Constants****************************
+
+    public static final String APP_LIST_URL = "http://api.steampowered.com/ISteamApps/GetAppList/v2";
+
+    public static final int APP_LIST_CACHE = 30;
+
 }

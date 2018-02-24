@@ -15,8 +15,6 @@ public interface SteamApiDao {
 
     List<SteamApi> queryAll();
 
-    List<SteamApi> test();
-
     void delAll();
 
     void insertSelective(SteamApi steamApi);
