@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head lang="en">
+    <meta charset="UTF-8" />
+    <title>Steam-Web-Api</title>
+    <script type="text/javascript" src="script/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="script/echarts.common.min.js"></script>
+</head>
+<body>
+
+    <script>
+
+    </script>
+
+
+    <h1>Steam-Web-Api</h1>
+
+    <table>
+        <tr>
+            <th>名称列表</th>
+        </tr>
+
+        <c:choose>
+            <c:when test="${api-names}">
+                <c:forEach var="list" items="${api-names.items}"  varStatus="vs">
+                    <tr>
+                        <td align="center">${var.name}</td>
+                    </tr>
+                </c:forEach>
+            </c:when>
+        </c:choose>
+
+    </table>
+
+</body>
+</html>

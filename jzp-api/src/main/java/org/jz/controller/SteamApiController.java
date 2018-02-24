@@ -1,5 +1,6 @@
 package org.jz.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.jz.commons.constant.SteamConstants;
 import org.jz.ext.steam.ApiList;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +50,6 @@ public class SteamApiController {
      * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
-    @RequestMapping(value = "/apilist")
     public JSONObject getApiList() throws IOException {
 
         List<SteamApi> list = steamApiService.queryAll();
@@ -88,11 +89,22 @@ public class SteamApiController {
     }
 
     @RequestMapping("/apilist")
-    public String index(ModelMap map) {
+    public String apiListPage(ModelMap map) throws IOException {
+        JSONObject jo = getApiList();
+        List<String> apiNames = new ArrayList<>(10);
+        if (null != jo && jo.size()>0) {
+            JSONArray interfaces = jo.getJSONArray("interfaces");
+
+            for (Object obj : interfaces) {
+                String json = JSONObject.toJSONString(obj);
+                JSONObject method = JSONObject.parseObject(json);
+                apiNames.add(method.getString("name"));
+            }
+        }
         // 加入一个属性，用来在模板中读取
-        map.addAttribute("host", "http://blog.didispace.com");
-        // return模板文件的名称，对应src/main/resources/templates/index.html
-        return "apiList";
+        map.addAttribute("api-names", apiNames);
+        // return模板文件的名称，对应src/main/resources/templates/api-list.html
+        return "api-list";
     }
 
 }
