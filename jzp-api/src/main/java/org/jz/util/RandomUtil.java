@@ -1,6 +1,6 @@
 package org.jz.util;
 
-import org.jz.commons.constant.Constants;
+import org.jz.common.constant.Constants;
 
 import java.util.UUID;
 

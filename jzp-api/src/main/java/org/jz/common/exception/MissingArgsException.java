@@ -1,4 +1,4 @@
-package org.jz.commons.exception;
+package org.jz.common.exception;
 
 /**
  * @author Hongyi Zheng

@@ -1,8 +1,7 @@
 package org.jz.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.jz.commons.constant.SteamConstants;
+import org.jz.common.constant.SteamConstants;
 import org.jz.ext.steam.ApiList;
 import org.jz.ext.steam.AppList;
 import org.jz.model.steam.SteamApi;
@@ -10,19 +9,14 @@ import org.jz.model.steam.SteamApp;
 import org.jz.service.SteamApiService;
 import org.jz.service.SteamAppService;
 import org.jz.util.CacheUtils;
-import org.jz.util.HttpClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -64,8 +58,8 @@ public class SteamApiController {
 
         List<SteamApi> list = steamApiService.queryAll();
         JSONObject rspJson;
-
-        //search cache if expired
+        //TODO considering to write the list to a file and backup to local hard-disk
+        //search db if expired
         if (null!=list &&list.size()>0) {
             if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
                 steamApiService.delAll();
