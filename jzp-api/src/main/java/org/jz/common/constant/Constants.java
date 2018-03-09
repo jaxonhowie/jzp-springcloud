@@ -1,4 +1,4 @@
-package org.jz.commons.constant;
+package org.jz.common.constant;
 
 /**
  * @author Hongyi Zheng

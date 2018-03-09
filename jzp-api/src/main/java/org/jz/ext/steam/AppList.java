@@ -2,7 +2,7 @@ package org.jz.ext.steam;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.jz.commons.constant.SteamConstants;
+import org.jz.common.constant.SteamConstants;
 import org.jz.model.steam.SteamApp;
 import org.jz.util.HttpClientUtils;
 import org.slf4j.Logger;

@@ -28,4 +28,6 @@ public class JzpApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JzpApiApplication.class, args);
 	}
+
+	
 }
