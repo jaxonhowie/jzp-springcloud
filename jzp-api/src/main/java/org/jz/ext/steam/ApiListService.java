@@ -21,9 +21,9 @@ import java.util.Map;
  */
 
 @Component("apiListService")
-public class ApiList {
+public class ApiListService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiList.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiListService.class);
 
     public List<SteamApi> parseToModel(JSONObject rspJson){
         List<SteamApi> list = new ArrayList<>();

@@ -20,9 +20,9 @@ import java.util.Map;
  * @date 2018/2/24
  */
 @Component("appListService")
-public class AppList {
+public class AppListService {
 
-    private final static Logger logger = LoggerFactory.getLogger(AppList.class);
+    private final static Logger logger = LoggerFactory.getLogger(AppListService.class);
 
     public List<SteamApp> parseToModel(JSONObject rspJson) throws IOException {
         List<SteamApp> list = new ArrayList<>();
@@ -40,8 +40,8 @@ public class AppList {
     public JSONObject parseToJson(List<SteamApp> list){
         JSONObject rspJson = new JSONObject();
         JSONArray apps = new JSONArray();
-        JSONObject jo = new JSONObject();
         for (SteamApp app : list) {
+            JSONObject jo = new JSONObject();
             jo.put("name",app.getName());
             jo.put("appid",app.getAppId());
             apps.add(jo);
