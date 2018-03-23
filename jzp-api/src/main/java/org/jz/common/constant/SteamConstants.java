@@ -11,13 +11,13 @@ public class SteamConstants {
     /** steam web api url */
     public static final String STEAM_PRIVATE_URL = "www.jz1989.org";
 
-    //************************ApiList Constants****************************
+    //************************ApiListService Constants****************************
 
     public static final int API_LIST_CACHE = 1;
 
     public static final String API_LIST_URL = "http://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v0001/";
 
-    //************************AppList Constants****************************
+    //************************AppListService Constants****************************
 
     public static final String APP_LIST_URL = "http://api.steampowered.com/ISteamApps/GetAppList/v2";
 

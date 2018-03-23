@@ -2,8 +2,8 @@ package org.jz.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.jz.common.constant.SteamConstants;
-import org.jz.ext.steam.ApiList;
-import org.jz.ext.steam.AppList;
+import org.jz.ext.steam.ApiListService;
+import org.jz.ext.steam.AppListService;
 import org.jz.model.steam.SteamApi;
 import org.jz.model.steam.SteamApp;
 import org.jz.service.SteamApiService;
@@ -38,7 +38,7 @@ public class SteamApiController {
     private final static Logger logger = LoggerFactory.getLogger(SteamApiController.class);
 
     @Autowired
-    ApiList apiList;
+    ApiListService apiListService;
 
     @Autowired
     SteamApiService steamApiService;
@@ -47,14 +47,14 @@ public class SteamApiController {
     SteamAppService steamAppService;
 
     @Autowired
-    AppList appList;
+    AppListService appListService;
 
     /**
      * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
     @RequestMapping("apilist")
-    public JSONObject getApiList() throws IOException {
+    public JSONObject getApiListService() throws IOException {
 
         List<SteamApi> list = steamApiService.queryAll();
         JSONObject rspJson;
@@ -64,8 +64,8 @@ public class SteamApiController {
             if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
                 steamApiService.delAll();
                 //call external Api
-                rspJson = apiList.callApiList();
-                list = apiList.parseToModel(rspJson);
+                rspJson = apiListService.callApiList();
+                list = apiListService.parseToModel(rspJson);
                 for (SteamApi steamApi : list) {
                     try {
                         steamApiService.insertSelective(steamApi);
@@ -74,12 +74,12 @@ public class SteamApiController {
                     }
                 }
             }
-            return apiList.parseToJson(list);
+            return apiListService.parseToJson(list);
         }else {
             //no cache,call external api
-            rspJson = apiList.callApiList();
+            rspJson = apiListService.callApiList();
             //cache to db
-            list = apiList.parseToModel(rspJson);
+            list = apiListService.parseToModel(rspJson);
             for (SteamApi steamApi : list) {
                 try {
                     steamApiService.insertSelective(steamApi);
@@ -97,7 +97,7 @@ public class SteamApiController {
      * @return
      */
     @RequestMapping(value = "/applist")
-    public JSONObject getAppList() throws IOException {
+    public JSONObject getAppListService() throws IOException {
 
         List<SteamApp> list = steamAppService.queryAll();
         JSONObject rspJson;
@@ -107,8 +107,8 @@ public class SteamApiController {
                 steamAppService.delAll();
 
                 //call external api
-                rspJson = appList.callAppListApi();
-                list = appList.parseToModel(rspJson);
+                rspJson = appListService.callAppListApi();
+                list = appListService.parseToModel(rspJson);
                 for (SteamApp app : list) {
                     try {
                         steamAppService.insertSelective(app);
@@ -117,12 +117,13 @@ public class SteamApiController {
                     }
                 }
             }
-            return appList.parseToJson(list);
+            //缓存未过期,则直接返回结果
+            return appListService.parseToJson(list);
         }else {
             //no cache,call external api
-            rspJson = appList.callAppListApi();
+            rspJson = appListService.callAppListApi();
             //cache to db
-            list = appList.parseToModel(rspJson);
+            list = appListService.parseToModel(rspJson);
             for (SteamApp steamApp : list) {
                 try {
                     steamAppService.insertSelective(steamApp);
