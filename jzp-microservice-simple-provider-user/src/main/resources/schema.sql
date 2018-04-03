@@ -1,4 +1,3 @@
-#-------------h2 schema----------------
 drop table user if exists;
 
 create table user (
