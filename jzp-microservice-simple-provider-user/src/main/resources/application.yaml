@@ -6,10 +6,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-  datasource:
-    platform: h2
-    schema: classpath:schema.sql
-    data: classpath:data.sql
+  datasource:                             #指定数据源
+    platform: h2                          #指定数据源类型
+    schema: classpath:schema.sql          #指定h2数据库建表脚本
+    data: classpath:data.sql              #指定h2数据库数据脚本
 logging:
   level:
     root: info
