@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: jzp-microservice-eureka-server-ha
+debug: true
+---
+#配置peer1
+spring:
+  #指定profile = peer1
+  profiles: peer1
+server:
+  port: 8761
+eureka:
+  instance:
+    #指定当profile = peer1时，主机名是peer1
+    hostname: peer1
+  client:
+    service-url:
+      #将自己注册到peer2
+      defaultZone: http://peer2:8762/eureka/
+---
+#使用 ---分割为三段配置
+#配置peer2
+spring:
+  profiles: peer2
+server:
+  port: 8762
+eureka:
+  instance:
+    hostname: peer2
+  client:
+    service-url:
+      defaultZone: http://peer1:8761/eureka/
+
