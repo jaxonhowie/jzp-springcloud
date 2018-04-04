@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.jz</groupId>
-	<artifactId>jzp-microservice-simple-consumer-movie</artifactId>
+	<artifactId>jzp-microservice-consumer-movie</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>jzp-microservice-simple-consumer-movie</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Demo project for Spring cloud Eureka</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -41,7 +41,25 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
 	</dependencies>
+
+	<!--引入spring cloud的依赖-->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Camden.SR4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<plugins>
