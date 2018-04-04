@@ -1,0 +1,45 @@
+server:
+  port: 8000
+
+spring:
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:                             #指定数据源
+    platform: h2                          #指定数据源类型
+    schema: classpath:schema.sql          #指定h2数据库建表脚本
+    data: classpath:data.sql              #指定h2数据库数据脚本
+  application:
+    name: jzp-microservice-provider-user  #指定该服务在eureka server上的应用名
+
+
+logging:
+  level:
+    root: info
+    org.hibernate: info
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+    org.hibernate.type.descriptor.sql.BasicExtractor: trace
+
+
+endpoints:
+  info:
+    enabled: true
+
+
+#TODO 使用.yaml 格式的配置文件时，需要使用 ${}取值，并且project.artifactId和project.build.sourceEncoding取不到
+info:
+  app:
+    name: @project.artifactId@
+    encoding: @project.build.sourceEncoding@
+    java:
+      source: @java.version@
+      target: @java.version@
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true  #是否配置该服务的ip到eureka server ，如果选false，则注册服务所在操作系统的hostname到eureka server
