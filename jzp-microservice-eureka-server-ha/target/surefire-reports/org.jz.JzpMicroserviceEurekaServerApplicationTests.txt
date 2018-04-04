@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.jz.JzpMicroserviceEurekaServerApplicationTests
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.322 sec - in org.jz.JzpMicroserviceEurekaServerApplicationTests
