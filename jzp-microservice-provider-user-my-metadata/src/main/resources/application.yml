@@ -40,4 +40,9 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka/
   instance:
-    prefer-ip-address: true  #是否配置该服务的ip到eureka server ，如果选false，则注册服务所在操作系统的hostname到eureka server
+    #是否配置该服务的ip到eureka server ，如果选false，则注册服务所在操作系统的hostname到eureka server
+    prefer-ip-address: true
+
+    metadata-map:
+      #自定义元数据--key/value都可以自己定义
+      my-metadata: 自定义元数据
