@@ -33,4 +33,19 @@ public class SteamApiServiceImpl implements SteamApiService{
     public void insertSelective(SteamApi steamApi) {
         steamApiDao.insertSelective(steamApi);
     }
+
+    @Override
+    public SteamApi selectByName(String name) {
+        return steamApiDao.selectByName(name);
+    }
+
+    @Override
+    public void updateSelective(SteamApi steamApi) {
+        steamApiDao.updateSelective(steamApi);
+    }
+
+    @Override
+    public List<SteamApi> queryAllIgnoreDel() {
+        return steamApiDao.queryAllIgnoreDel();
+    }
 }

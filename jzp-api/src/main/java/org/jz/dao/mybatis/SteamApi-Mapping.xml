@@ -20,9 +20,32 @@
         WHERE IS_DEL = '0'
     </select>
 
-    <delete id="delAll">
-        DELETE FROM ext_steam_api
-    </delete>
+    <select id="queryAllIgnoreDel" resultMap="getMap">
+        SELECT * FROM ext_steam_api
+    </select>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="getMap">
+        SELECT * FROM ext_steam_api WHERE NAME = #{name}
+    </select>
+
+    <!--逻辑删除-->
+    <update id="delAll">
+        UPDATE ext_steam_api SET IS_DEL = '1'
+    </update>
+
+    <!--根据接口名称更新接口-->
+    <update id="updateSelective" parameterType="org.jz.model.steam.SteamApi">
+        UPDATE ext_steam_api
+        <set>
+            <if test="oid != null">OID=#{oid},</if>
+            <if test="methods != null">METHODS=#{methods},</if>
+            <if test="oitime != null">OITIME=#{oitime},</if>
+            <if test="outime != null">OUTIME=#{outime},</if>
+            <if test="isDel != null">IS_DEL=#{isDel},</if>
+        </set>
+        WHERE NAME =#{name}
+
+    </update>
 
     <insert id="insertSelective" parameterType="org.jz.model.steam.SteamApi">
         INSERT INTO ext_steam_api

@@ -18,4 +18,10 @@ public interface SteamApiDao {
     void delAll();
 
     void insertSelective(SteamApi steamApi);
+
+    SteamApi selectByName(String name);
+
+    void updateSelective(SteamApi steamApi);
+
+    List<SteamApi> queryAllIgnoreDel();
 }
