@@ -1,6 +1,7 @@
 package org.jz.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import org.jz.common.constant.Constants;
 import org.jz.common.constant.SteamConstants;
 import org.jz.ext.steam.ApiListService;
 import org.jz.ext.steam.AppListService;
@@ -12,10 +13,14 @@ import org.jz.util.CacheUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +32,7 @@ import java.util.List;
  *          json (default):The JavaScript Object Notation format
  *          xml:Standard XML
  *      3.vdf:Valve Data Format
+ *
  * @author Hongyi Zheng
  * @date 2018/2/8
  */
@@ -50,49 +56,69 @@ public class SteamApiController {
     AppListService appListService;
 
     /**
+     * 获取steam接口列表（接口列表每次全量更新，先清后添加）
+     *
      * wrap ${@link org.jz.ext.steam.ApiEnum} APIs
      * @return
      */
-    @RequestMapping("apilist")
+    @GetMapping("/apilist")
     public JSONObject getApiListService() throws IOException {
 
-        List<SteamApi> list = steamApiService.queryAll();
-        JSONObject rspJson;
-        //TODO considering to write the list to a file and backup to local hard-disk
-        //search db if expired
-        if (null!=list &&list.size()>0) {
-            if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,list.get(0).getOutime())) {
+        logger.info("调用获取steam api 列表接口");
+
+        //数据库结果
+        List<SteamApi> dbList = steamApiService.queryAllIgnoreDel();
+        //接口列表
+        List<SteamApi> apiList;
+        JSONObject rspJson = new JSONObject();
+        //查询数据是否过期
+        if (null!=dbList &&dbList.size()>0) {
+            if (CacheUtils.isExpired(SteamConstants.API_LIST_CACHE,dbList.get(0).getOutime())) {
+                //数据过期，清除过期数据
                 steamApiService.delAll();
-                //call external Api
                 rspJson = apiListService.callApiList();
-                list = apiListService.parseToModel(rspJson);
-                for (SteamApi steamApi : list) {
+                apiList = apiListService.parseToModel(rspJson);
+                for (SteamApi steamApi : apiList) {
+                    if (null != steamApiService.selectByName(steamApi.getName())) {
+                        steamApi.setOutime(new Date());
+                        steamApi.setIsDel(Constants.DEL_NGT);
+                        try {
+                            steamApiService.updateSelective(steamApi);
+                        } catch (Exception e) {
+                            logger.error("Data update exception:{}", e.getMessage());
+                        }
+                        continue;
+                    }
                     try {
                         steamApiService.insertSelective(steamApi);
                     } catch (Exception e) {
-                        logger.error("Data insert exception:{}",e.getMessage());
+                        logger.error("Data insert exception:{}", e.getMessage());
                     }
                 }
+            }else {
+                apiList = dbList;
+                rspJson = apiListService.parseToJson(apiList);
             }
-            return apiListService.parseToJson(list);
         }else {
             //no cache,call external api
             rspJson = apiListService.callApiList();
-            //cache to db
-            list = apiListService.parseToModel(rspJson);
-            for (SteamApi steamApi : list) {
+            //落库
+            apiList = apiListService.parseToModel(rspJson);
+            for (SteamApi steamApi : apiList) {
                 try {
                     steamApiService.insertSelective(steamApi);
                 } catch (Exception e) {
                     logger.error("Data insert exception:{}",e.getMessage());
                 }
             }
-            return rspJson;
+
         }
+        return rspJson;
 
     }
 
     /**
+     * 获取steam APP 列表
      *
      * @return
      */

@@ -1,14 +1,10 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:7059/eureka/
 server:
   port: 7060
 spring:
   application:
     name: jzp-api
   datasource:
-    url: jdbc:mysql://localhost:3306/jzp_spring_cloud
+    url: jdbc:mysql://localhost:3306/jzp_spring_cloud?characterEncoding=utf8&useSSL=true
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -18,4 +14,3 @@ spring:
 #this config avoid dao interface mismatch with its mapping profile
 mybatis:
   mapper-locations: classpath*:/org/jz/dao/mybatis/**Mapping.xml
-

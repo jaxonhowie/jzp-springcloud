@@ -4,6 +4,8 @@ package org.jz.util;
 import java.util.Date;
 
 /**
+ * 判断缓存是否过期
+ *
  * @author Hongyi Zheng
  * @date 2018/2/9
  */
@@ -13,13 +15,8 @@ public class CacheUtils {
         if (0 == cacheDays || null == outime) {
             return false;
         } else {
-            return outime.getTime()>getExpireTime(cacheDays);
+            return (outime.getTime() + (cacheDays * 1000 * 60 * 60 * 24)) < System.currentTimeMillis();
         }
-    }
-
-    private static long getExpireTime(int cacheDays){
-        long curr = System.currentTimeMillis();
-        return curr + 24*60*60*1000*cacheDays;
     }
 
 }
