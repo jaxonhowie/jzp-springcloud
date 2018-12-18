@@ -8,9 +8,10 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
+  thymeleaf:
+    suffix: .html
 
 
-
-#this config avoid dao interface mismatch with its mapping profile
+#this config avoid dao interface mismatch  with its mapping profile
 mybatis:
   mapper-locations: classpath*:/org/jz/dao/mybatis/**Mapping.xml
